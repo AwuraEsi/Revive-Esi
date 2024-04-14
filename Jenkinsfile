@@ -23,7 +23,8 @@ pipeline {
                 echo 'Deploying....'
             }
         }
-    }post {
+    }
+    post {
        success {
            slackSend color: '#2EB67D',
            channel: 'awuraesi-revive', 
