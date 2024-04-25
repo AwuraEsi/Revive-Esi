@@ -2,25 +2,34 @@ pipeline {
     agent any
 
     stages {
-        stage('create a directory') {
+        
+        stage('Test microservice catalog') {
+          agent {
+            docker {
+              image 'golang:1.20.1'
+              args '-u 0:0'
+            }
+           }
             steps {
                 sh '''
-                mkdir banana
-                rm -rf banana
+            cd $WORKSPACE/REVIVE/src/catalog/
+            go test
                 '''
             }
         }
-        stage('create a file') {
+
+        stage('Test microservice cart') {
+          agent {
+            docker {
+              image 'maven'
+              args '-u 0:0'
+            }
+           }
             steps {
                 sh '''
-                touch banana.txt
-                rm -rf banana.txt
+            cd $WORKSPACE/REVIVE/src/cart/
+            go test
                 '''
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
             }
         }
     }
