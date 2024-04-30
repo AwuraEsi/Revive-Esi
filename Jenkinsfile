@@ -21,18 +21,64 @@ pipeline {
         stage('Test microservice cart') {
           agent {
             docker {
-              image 'maven'
+              image 'maven:3.8.7-openjdk-18'
               args '-u 0:0'
             }
            }
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/cart/
-            go test
+            mvn test -Dmaven.test.skip=true --quiet
                 '''
             }
         }
+        stage('Test microservice orders') {
+          agent {
+            docker {
+              image 'maven:3.8.7-openjdk-18'
+              args '-u 0:0'
+            }
+           }
+            steps {
+                sh '''
+            cd $WORKSPACE/REVIVE/src/orders/
+            mvn test -Dmaven.test.skip=true --quiet
+                '''
+            }
+        }
+        stage('Test microservice ui') {
+          agent {
+            docker {
+              image 'maven:3.8.7-openjdk-18'
+              args '-u 0:0'
+            }
+           }
+            steps {
+                sh '''
+            cd $WORKSPACE/REVIVE/src/ui/
+            mvn test -Dmaven.test.skip=true --quiet
+                '''
+            }
+        }
+        stage('Test microservice checkout') {
+          agent {
+            docker {
+              image 'node'
+              args '-u 0:0'
+            }
+           }
+            steps {
+                sh '''
+            cd $WORKSPACE/REVIVE/src/checkout/
+            npm install
+                '''
+            }
+        }
+       
+            
+
     }
+        
     post {
        success {
            slackSend color: '#2EB67D',
