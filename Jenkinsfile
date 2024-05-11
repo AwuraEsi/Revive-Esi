@@ -2,6 +2,14 @@ pipeline {
     agent any
 
     stages {
+        stage('clean env') {
+            steps {
+                sh '''
+            docker system prune -fa || true
+                '''
+            }
+        }
+      
         
         stage('Test microservice catalog') {
           agent {
@@ -74,6 +82,29 @@ pipeline {
                 '''
             }
         }
+        stage('SonarQube analysis') {
+                agent {
+                    docker {
+                      image 'sonarsource/sonar-scanner-cli:4.7.0'
+                    }
+                   }
+                   environment {
+            CI = 'true'
+            scannerHome='/opt/sonar-scanner'
+        }
+                steps{
+                    withSonarQubeEnv('sonar') {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
+            }
+        stage("Quality Gate") {
+                steps {
+                  timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                  }
+                }
+              }
        
             
 
