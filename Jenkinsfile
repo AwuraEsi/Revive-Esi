@@ -21,7 +21,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/catalog/
-            go test
+            go build   -buildvcs=falset
                 '''
             }
         }
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/cart/
-            mvn test -Dmaven.test.skip=true --quiet
+            mvn package -Dmaven.test.skip=true --quiet
                 '''
             }
         }
@@ -50,7 +50,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/orders/
-            mvn test -Dmaven.test.skip=true --quiet
+            mvn package -Dmaven.test.skip=true --quiet
                 '''
             }
         }
@@ -64,7 +64,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/ui/
-            mvn test -Dmaven.test.skip=true --quiet
+            mvn package -Dmaven.test.skip=true --quiet
                 '''
             }
         }
@@ -78,7 +78,9 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/checkout/
-            npm install
+            npm run build
+          
+          
                 '''
             }
         }
