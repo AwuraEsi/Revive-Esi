@@ -21,7 +21,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/catalog/
-            go build   -buildvcs=falset
+            go test   
                 '''
             }
         }
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/cart/
-            mvn package -Dmaven.test.skip=true --quiet
+            mvn  test  -Dmaven.test.skip=true --quiet
                 '''
             }
         }
@@ -50,7 +50,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/orders/
-            mvn package -Dmaven.test.skip=true --quiet
+            mvn  test  -Dmaven.test.skip=true --quiet
                 '''
             }
         }
@@ -64,7 +64,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/ui/
-            mvn package -Dmaven.test.skip=true --quiet
+            mvn  test  -Dmaven.test.skip=true --quiet
                 '''
             }
         }
@@ -78,7 +78,7 @@ pipeline {
             steps {
                 sh '''
             cd $WORKSPACE/REVIVE/src/checkout/
-            npm run build
+            npm install
           
           
                 '''
@@ -107,10 +107,55 @@ pipeline {
                   }
                 }
               }
+        stage('build microservice catalog') {
+          agent {
+            docker {
+              image 'golang:1.20.1'
+              args '-u 0:0'
+            }
+           }
+            steps {
+                sh '''
+            cd $WORKSPACE/REVIVE/src/catalog/
+            go build  
+                '''
+            }
+        }    
+        stage('build microservice cart') {
+          agent {
+            docker {
+              image 'maven:3.8.7-openjdk-18'
+              args '-u 0:0'
+            }
+           }
+            steps {
+                sh '''
+            cd $WORKSPACE/REVIVE/src/cart/
+            mvn  package -Dmaven.test.skip=true --quiet
+                '''
+            }
+        }  stage('build microservice checkout') {
+          agent {
+            docker {
+              image 'node'
+              args '-u 0:0'
+            }
+           }
+            steps {
+                sh '''
+            cd $WORKSPACE/REVIVE/src/checkout/
+            npm run build
+          
+          
+                '''
+            }
+        }
+
        
             
 
     }
+
         
     post {
        success {
